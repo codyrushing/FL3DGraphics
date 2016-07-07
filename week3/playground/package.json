@@ -5,6 +5,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "http-server",
     "dev": "gulp dev"
   },
   "author": "",
@@ -21,6 +22,7 @@
     "gulp-define-module": "^0.1.4",
     "gulp-eslint": "^2.0.0",
     "gulp-handlebars": "^4.0.0",
+    "gulp-if": "^2.0.1",
     "gulp-load-plugins": "^1.2.2",
     "gulp-newer": "^1.1.0",
     "gulp-notify": "^2.2.0",
@@ -34,6 +36,7 @@
     "gulp-watch": "^4.3.5",
     "gulp-wrap": "^0.11.0",
     "handlebars": "^4.0.5",
+    "lazypipe": "^1.0.1",
     "normalize.css": "^4.1.1",
     "run-sequence": "^1.1.5",
     "three": "^0.76.1",

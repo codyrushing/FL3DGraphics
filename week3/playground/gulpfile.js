@@ -4,6 +4,8 @@ const gulp = require("gulp")
 const gulpPlugins = require("gulp-load-plugins")()
 const runSequence = require("run-sequence")
 
+var isProduction = false
+
 var paths = {
   src: {
     app: path.join(__dirname, "src", "app"),
@@ -70,6 +72,14 @@ gulp.task("js", ["eslint"], () => {
   const browserify = require("browserify")
   const source = require("vinyl-source-stream")
 
+  // uglify and rename for production
+  var jsProdChannel = require("lazypipe")()
+    .pipe(gulpPlugins.streamify, gulpPlugins.uglify())
+    .pipe(gulpPlugins.rename, {
+      suffix: ".min"
+    })
+    .pipe(gulp.dest, paths.dist.js)
+
   var b = browserify(
     path.join(paths.src.app, "main.js"), // entry point
     {
@@ -80,12 +90,15 @@ gulp.task("js", ["eslint"], () => {
   return b.bundle()
     .pipe(source("app.js"))
     .pipe(gulp.dest(paths.dist.js))
+    .pipe(gulpPlugins.if(isProduction, jsProdChannel()))
     .pipe(gulpPlugins.notify("app.js built :)"))
-    .pipe(gulpPlugins.streamify(gulpPlugins.uglify()))
-    .pipe(gulpPlugins.rename({
-      suffix: ".min"
-    }))
-    .pipe(gulp.dest(paths.dist.js))
+})
+
+gulp.task("js-prod", () => {
+  const lazypipe = require("lazypipe")
+
+  return lazypipe()
+  .pip
 })
 
 gulp.task("templates", function(){
@@ -137,6 +150,11 @@ gulp.task("hbs-partials", function(){
     .pipe(gulp.dest(partialsDest))
 })
 
+gulp.task("server", (done) => {
+  require("child_process").exec("npm run server")
+  done()
+})
+
 gulp.task("watch", (done) => {
   gulpPlugins.watch(path.join(paths.src.app, "**/*.js"), () => {
     runSequence("js")
@@ -151,5 +169,5 @@ gulp.task("watch", (done) => {
 })
 
 gulp.task("dev", (done) => {
-  runSequence("templates", ["js", "css"], "watch", done)
+  runSequence("templates", ["js", "css", "server"], "watch", done)
 })
